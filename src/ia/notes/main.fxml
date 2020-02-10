@@ -41,8 +41,8 @@
                   </ListView>
                   <ButtonBar buttonMinWidth="64.0" prefHeight="40.0" prefWidth="200.0">
                     <buttons>
-                        <Button mnemonicParsing="false" text="Add" />
-                        <Button mnemonicParsing="false" text="Remove" />
+                        <Button fx:id="addButton" mnemonicParsing="false" text="Add" />
+                        <Button fx:id="removeButton" mnemonicParsing="false" text="Remove" />
                     </buttons>
                   </ButtonBar>
                </children>

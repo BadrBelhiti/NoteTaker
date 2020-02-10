@@ -9,6 +9,8 @@ import javafx.stage.Stage;
 
 public class Main extends Application {
 
+    private FileManager fileManager;
+
     @Override
     public void start(Stage primaryStage) throws Exception{
 
@@ -20,7 +22,7 @@ public class Main extends Application {
 
 
         // Initialize files
-        FileManager fileManager = new FileManager(this);
+        this.fileManager = new FileManager(this);
         fileManager.loadNotes();
 
 
