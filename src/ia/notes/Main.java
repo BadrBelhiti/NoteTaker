@@ -15,7 +15,9 @@ public class Main extends Application {
     public void start(Stage primaryStage) throws Exception{
 
         // Launch JavaFX
-        Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
+        FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
+        Controller controller = loader.getController();
+        Parent root = loader.load();
         primaryStage.setTitle("Note Taker");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
@@ -27,9 +29,13 @@ public class Main extends Application {
 
 
         // Initialize UI
-        
+        controller.init(this);
+
     }
 
+    public FileManager getFileManager() {
+        return fileManager;
+    }
 
     public static void main(String[] args) {
         launch(args);

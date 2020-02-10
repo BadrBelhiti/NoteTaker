@@ -4,7 +4,7 @@ public class Insertion extends Modification {
 
     private char character;
 
-    protected Insertion(char character, int pos, long time) {
+    public Insertion(char character, int pos, long time) {
         super(pos, time);
         this.character = character;
     }

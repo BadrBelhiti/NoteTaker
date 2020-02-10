@@ -28,18 +28,28 @@ public class FileManager {
 
         for (File note : notes){
             NotesFile notesFile = new NotesFile(note.getName());
-
-            try {
-                notesFile.load();
-                notesFiles.add(notesFile);
-            } catch (IOException e){
-                String name = notesFile.getName();
-                System.out.println(String.format("Error loading notes file '%s'", name));
-            }
+            loadFile(notesFile);
         }
 
         System.out.println(notesFiles);
         this.notesFiles = notesFiles;
+    }
+
+    public void loadFile(NotesFile notesFile){
+        try {
+            notesFile.load();
+            notesFiles.add(notesFile);
+        } catch (IOException e){
+            String name = notesFile.getName();
+            System.out.printf("Error loading notes file '%s'", name);
+        }
+    }
+
+    public void deleteNotes(String notes){
+        File file = new File(MASTER_DIRECTORY, notes);
+        if (!file.delete()){
+            System.out.printf("Error deleting file '%s'", notes);
+        }
     }
 
     public void saveAll(){
@@ -48,9 +58,18 @@ public class FileManager {
                 notesFile.save();
             } catch (IOException e){
                 String name = notesFile.getName();
-                System.out.println(String.format("Error saving notes file '%s'", name));
+                System.out.printf("Error saving notes file '%s'", name);
             }
         }
+    }
+
+    public NotesFile getNotesFile(String name){
+        for (NotesFile notesFile : notesFiles){
+            if (notesFile.name.equals(name)){
+                return notesFile;
+            }
+        }
+        return null;
     }
 
 

@@ -1,5 +1,8 @@
 package ia.notes;
 
+import ia.notes.files.FileManager;
+import ia.notes.files.NotesFile;
+import ia.notes.modifications.Modification;
 import javafx.collections.FXCollections;
 import javafx.collections.ObservableList;
 import javafx.fxml.FXML;
@@ -19,12 +22,18 @@ public class Controller {
     @FXML
     private Button removeButton;
 
+    @FXML
+    private TextArea notesArea;
+
     private ObservableList<String> notes = FXCollections.observableArrayList();
 
     private Main main;
+    private FileManager fileManager;
+    private NotesFile currentNotes;
 
     public void init(Main main){
         this.main = main;
+        this.fileManager = main.getFileManager();
     }
 
     public void initialize(){
@@ -39,6 +48,11 @@ public class Controller {
 
             Optional<String> result = dialog.showAndWait();
             result.ifPresent(name -> notes.add(name));
+            if (result.isPresent()){
+                String notes = result.get();
+                NotesFile notesFile = new NotesFile(notes);
+                fileManager.loadFile(notesFile);
+            }
         });
 
         removeButton.setOnAction((e) -> {
@@ -62,8 +76,16 @@ public class Controller {
 
             if (clicked.get() == confirm){
                 notes.remove(name);
+                fileManager.deleteNotes(name);
             }
 
+        });
+
+        notesArea.textProperty().addListener((e, o , n) -> {
+            Modification modification = Utils.getChange(o, n, System.currentTimeMillis());
+            if (modification != null && currentNotes != null){
+                currentNotes.getNotes().edit(modification);
+            }
         });
 
     }

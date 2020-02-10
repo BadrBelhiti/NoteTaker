@@ -15,6 +15,15 @@ public abstract class AbstractFile {
         this.name = name;
         this.directory = directory;
         this.file = new File(directory, name);
+
+        if (!file.exists()){
+            try {
+                file.createNewFile();
+            } catch (IOException e){
+                System.out.printf("Error creating file '%s' in directory '%s'", name, directory.getAbsolutePath());
+            }
+        }
+
     }
 
     public abstract void load() throws FileNotFoundException;

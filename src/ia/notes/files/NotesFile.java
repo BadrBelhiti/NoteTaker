@@ -11,7 +11,7 @@ public class NotesFile extends AbstractFile {
 
     private Notes notes;
 
-    protected NotesFile(String name) {
+    public NotesFile(String name) {
         super(name, new File(FileManager.getMasterDirectory(), "notes"));
     }
 
@@ -56,4 +56,10 @@ public class NotesFile extends AbstractFile {
         }
     }
 
+    public Notes getNotes() throws IllegalStateException {
+        if (notes == null){
+            throw new IllegalStateException("Attempted to access unloaded Notes instance: " + name);
+        }
+        return notes;
+    }
 }
