@@ -16,10 +16,11 @@ public class Main extends Application {
 
         // Launch JavaFX
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
-        Controller controller = loader.getController();
         Parent root = loader.load();
+        Controller controller = loader.getController();
         primaryStage.setTitle("Note Taker");
         primaryStage.setScene(new Scene(root, 800, 600));
+        primaryStage.setOnCloseRequest((e) -> stop());
         primaryStage.show();
 
 
@@ -31,6 +32,10 @@ public class Main extends Application {
         // Initialize UI
         controller.init(this);
 
+    }
+
+    public void stop(){
+        // TODO: Save files, close IO threads
     }
 
     public FileManager getFileManager() {

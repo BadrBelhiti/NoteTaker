@@ -20,7 +20,7 @@ public abstract class AbstractFile {
             try {
                 file.createNewFile();
             } catch (IOException e){
-                System.out.printf("Error creating file '%s' in directory '%s'", name, directory.getAbsolutePath());
+                System.out.printf("Error creating file '%s' in directory '%s'%n", name, directory.getAbsolutePath());
             }
         }
 

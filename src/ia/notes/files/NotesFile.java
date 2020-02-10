@@ -18,6 +18,9 @@ public class NotesFile extends AbstractFile {
     @Override
     public synchronized void load() throws FileNotFoundException {
         Scanner input = new Scanner(file);
+        if (!input.hasNext()){
+            return;
+        }
         String title = input.nextLine();
         TreeSet<Modification> modifications = new TreeSet<>();
 

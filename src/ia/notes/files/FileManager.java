@@ -9,12 +9,25 @@ import java.util.ArrayList;
 public class FileManager {
 
     private static final File MASTER_DIRECTORY = new File(".", "NoteTaker");
+    private static final File NOTES_DIRECTORY = new File(MASTER_DIRECTORY, "notes");
 
     private Main main;
     private ArrayList<NotesFile> notesFiles;
 
     public FileManager(Main main) {
         this.main = main;
+        this.notesFiles = new ArrayList<>();
+        if (!initDirectories()){
+            System.out.println("Critical error creating program directory. Closing application...");
+            main.stop();
+        }
+    }
+
+    private boolean initDirectories(){
+        if (!NOTES_DIRECTORY.exists()){
+            return NOTES_DIRECTORY.mkdirs();
+        }
+        return true;
     }
 
     public void loadNotes(){
@@ -41,14 +54,14 @@ public class FileManager {
             notesFiles.add(notesFile);
         } catch (IOException e){
             String name = notesFile.getName();
-            System.out.printf("Error loading notes file '%s'", name);
+            System.out.printf("Error loading notes file '%s'%n", name);
         }
     }
 
     public void deleteNotes(String notes){
-        File file = new File(MASTER_DIRECTORY, notes);
+        File file = new File(NOTES_DIRECTORY, notes);
         if (!file.delete()){
-            System.out.printf("Error deleting file '%s'", notes);
+            System.out.printf("Error deleting file '%s'%n", notes);
         }
     }
 
@@ -58,7 +71,7 @@ public class FileManager {
                 notesFile.save();
             } catch (IOException e){
                 String name = notesFile.getName();
-                System.out.printf("Error saving notes file '%s'", name);
+                System.out.printf("Error saving notes file '%s'%n", name);
             }
         }
     }
