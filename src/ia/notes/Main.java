@@ -1,5 +1,6 @@
 package ia.notes;
 
+import ia.notes.files.FileManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -10,10 +11,21 @@ public class Main extends Application {
 
     @Override
     public void start(Stage primaryStage) throws Exception{
+
+        // Launch JavaFX
         Parent root = FXMLLoader.load(getClass().getResource("main.fxml"));
         primaryStage.setTitle("Note Taker");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
+
+
+        // Initialize files
+        FileManager fileManager = new FileManager(this);
+        fileManager.loadNotes();
+
+
+        // Initialize UI
+        
     }
 
 
