@@ -1,5 +1,7 @@
 package ia.notes;
 
+import ia.notes.concurrency.GeneralRequest;
+import ia.notes.concurrency.IOManager;
 import ia.notes.files.FileManager;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
@@ -10,6 +12,7 @@ import javafx.stage.Stage;
 public class Main extends Application {
 
     private FileManager fileManager;
+    private IOManager ioManager;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -24,9 +27,17 @@ public class Main extends Application {
         primaryStage.show();
 
 
-        // Initialize files
+        // Initialize managers
+        this.ioManager = new IOManager(this);
         this.fileManager = new FileManager(this);
-        fileManager.loadNotes();
+
+        // Asynchronously load notes from storage
+        ioManager.executeLater(new GeneralRequest() {
+            @Override
+            public void run(Main main) {
+                fileManager.loadNotes();
+            }
+        });
 
 
         // Initialize UI
@@ -35,7 +46,21 @@ public class Main extends Application {
     }
 
     public void stop(){
-        // TODO: Save files, close IO threads
+
+        // Save all notes
+        ioManager.executeLater(new GeneralRequest() {
+            @Override
+            public void run(Main main) {
+                fileManager.saveNotes();
+            }
+        });
+
+        // Safely stop concurrency operations
+        try {
+            ioManager.shutdown();
+        } catch (InterruptedException e){
+            e.printStackTrace();
+        }
     }
 
     public FileManager getFileManager() {

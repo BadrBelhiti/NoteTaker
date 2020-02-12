@@ -10,7 +10,7 @@ import java.util.TreeSet;
 public class Notes implements Runnable {
 
     private static final long AUTOSAVE_INTERVAL_MS = 60 * 1000;
-    private final Thread IO_THREAD;
+    private final Thread WORKER_THREAD;
 
     private boolean listening;
     private long lastSave;
@@ -27,12 +27,12 @@ public class Notes implements Runnable {
         this.title = title;
         this.modifications = modifications;
 
-        this.IO_THREAD = new Thread(this);
+        this.WORKER_THREAD = new Thread(this);
     }
 
     public void start(){
         this.running = true;
-        IO_THREAD.start();
+        WORKER_THREAD.start();
     }
 
     @Override
@@ -67,7 +67,7 @@ public class Notes implements Runnable {
         this.running = false;
         boolean success = true;
         try {
-            IO_THREAD.join();
+            WORKER_THREAD.join();
         } catch (InterruptedException e){
             success = false;
         }

@@ -5,6 +5,7 @@ import ia.notes.Main;
 import java.io.File;
 import java.io.IOException;
 import java.util.ArrayList;
+import java.util.HashSet;
 
 public class FileManager {
 
@@ -12,11 +13,11 @@ public class FileManager {
     private static final File NOTES_DIRECTORY = new File(MASTER_DIRECTORY, "notes");
 
     private Main main;
-    private ArrayList<NotesFile> notesFiles;
+    private HashSet<NotesFile> notesFiles;
 
     public FileManager(Main main) {
         this.main = main;
-        this.notesFiles = new ArrayList<>();
+        this.notesFiles = new HashSet<>();
         if (!initDirectories()){
             System.out.println("Critical error creating program directory. Closing application...");
             main.stop();
@@ -33,7 +34,7 @@ public class FileManager {
     public void loadNotes(){
         File notesDirectory = new File(MASTER_DIRECTORY, "notes");
         File[] notes = notesDirectory.listFiles();
-        ArrayList<NotesFile> notesFiles = new ArrayList<>();
+        HashSet<NotesFile> notesFiles = new HashSet<>();
 
         if (notes == null){
             return;
@@ -42,9 +43,9 @@ public class FileManager {
         for (File note : notes){
             NotesFile notesFile = new NotesFile(note.getName());
             loadFile(notesFile);
+            notesFiles.add(notesFile);
         }
 
-        System.out.println(notesFiles);
         this.notesFiles = notesFiles;
     }
 
@@ -65,14 +66,18 @@ public class FileManager {
         }
     }
 
-    public void saveAll(){
+    public void saveNotes(){
         for (NotesFile notesFile : notesFiles){
-            try {
-                notesFile.save();
-            } catch (IOException e){
-                String name = notesFile.getName();
-                System.out.printf("Error saving notes file '%s'%n", name);
-            }
+            saveFile(notesFile);
+        }
+    }
+
+    public void saveFile(NotesFile notesFile){
+        try {
+            notesFile.save();
+        } catch (IOException e){
+            String name = notesFile.getName();
+            System.out.printf("Error saving notes file '%s'%n", name);
         }
     }
 
