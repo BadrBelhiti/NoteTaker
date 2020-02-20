@@ -23,7 +23,6 @@ public class Main extends Application {
         Controller controller = loader.getController();
         primaryStage.setTitle("Note Taker");
         primaryStage.setScene(new Scene(root, 800, 600));
-        primaryStage.setOnCloseRequest((e) -> stop());
         primaryStage.show();
 
 
@@ -46,14 +45,19 @@ public class Main extends Application {
     }
 
     public void stop(){
+        System.out.println("Closing...");
 
         // Save all notes
+        fileManager.saveNotes();
+
+        /*
         ioManager.executeLater(new GeneralRequest() {
             @Override
             public void run(Main main) {
                 fileManager.saveNotes();
             }
         });
+        */
 
         // Safely stop concurrency operations
         try {

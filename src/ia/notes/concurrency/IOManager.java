@@ -11,7 +11,7 @@ public class IOManager implements Runnable {
     private final Thread IO_THREAD;
 
     private Main main;
-    private LinkedList<IORequest> queue;
+    private volatile LinkedList<IORequest> queue;
     private HashSet<Thread> workerThreads;
     private volatile boolean running = true;
 
@@ -22,6 +22,8 @@ public class IOManager implements Runnable {
         this.main = main;
         this.queue = new LinkedList<>();
         this.workerThreads = new HashSet<>();
+
+        IO_THREAD.start();
     }
 
 
@@ -30,11 +32,17 @@ public class IOManager implements Runnable {
         while (running){
 
             // Get top priority request
-            IORequest currentRequest = queue.getFirst();
+            IORequest currentRequest = null;
+
+            if (!queue.isEmpty()){
+                currentRequest = queue.getFirst();
+            }
 
             // Execute pending request if exists then remove request from queue
             if (currentRequest != null){
+                System.out.println("Executing request...");
                 currentRequest.run(main);
+                System.out.println("Request executed");
                 queue.removeFirst();
             }
 

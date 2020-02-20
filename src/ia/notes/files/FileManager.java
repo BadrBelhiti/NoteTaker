@@ -68,7 +68,9 @@ public class FileManager {
 
     public void saveNotes(){
         for (NotesFile notesFile : notesFiles){
+            System.out.printf("Saving notes file: %s...%n", notesFile.name);
             saveFile(notesFile);
+            System.out.printf("Saved notes file: %s%n", notesFile.name);
         }
     }
 
