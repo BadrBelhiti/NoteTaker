@@ -14,6 +14,7 @@ public class Utils {
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
         MatchResult matchResult = matcher.toMatchResult();
+        System.out.println(matchResult);
         return matchResult.group();
     }
 
@@ -21,6 +22,13 @@ public class Utils {
     /**
      * @precondition    oldValue and newValue differ by exactly 1 character
      */
+
+    // hhh
+    // hhhh
+
+    // aaab
+    // aab
+
     public static Modification getChange(String oldValue, String newValue, long timestamp){
 
         for (int i = 0; i < Math.min(oldValue.length(), newValue.length()); i++){
@@ -36,7 +44,13 @@ public class Utils {
             }
         }
 
-        return null;
+        if (oldValue.length() < newValue.length()){
+            int last = newValue.length() - 1;
+            return new Insertion(newValue.charAt(last), last, timestamp);
+        } else {
+            int last = oldValue.length() - 1;
+            return new Deletion(last, timestamp);
+        }
     }
 
 

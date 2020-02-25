@@ -47,7 +47,6 @@ public class Controller {
             dialog.setContentText("Name of notes:");
 
             Optional<String> result = dialog.showAndWait();
-            result.ifPresent(name -> notes.add(name));
             if (result.isPresent()){
                 String notes = result.get();
                 NotesFile notesFile = new NotesFile(notes);
@@ -83,11 +82,23 @@ public class Controller {
 
         notesArea.textProperty().addListener((e, o , n) -> {
             Modification modification = Utils.getChange(o, n, System.currentTimeMillis());
+            System.out.println(modification);
             if (modification != null && currentNotes != null){
                 currentNotes.getNotes().edit(modification);
             }
         });
 
+        notesList.getSelectionModel().selectedItemProperty().addListener((e) -> {
+            String selected = (String) notesList.getSelectionModel().getSelectedItem();
+            System.out.printf("Selected: %s%n", selected);
+            this.currentNotes = fileManager.getNotesFile(selected);
+            System.out.println(currentNotes == null);
+        });
+
+    }
+
+    public void registerNotes(NotesFile notesFile){
+        notes.add(notesFile.getName());
     }
 
 }

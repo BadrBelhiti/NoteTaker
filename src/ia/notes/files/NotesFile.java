@@ -18,9 +18,12 @@ public class NotesFile extends AbstractFile {
     @Override
     public synchronized void load() throws FileNotFoundException {
         Scanner input = new Scanner(file);
+
         if (!input.hasNext()){
+            this.notes = new Notes(this, name, new TreeSet<>());
             return;
         }
+
         String title = input.nextLine();
         TreeSet<Modification> modifications = new TreeSet<>();
 
@@ -54,9 +57,13 @@ public class NotesFile extends AbstractFile {
         writer.println(notes.getTitle());
 
         // Write all modification data in chronological order
+        System.out.println("Size: " + notes.getModifications().size());
         for (Modification modification : notes.getModifications()){
             writer.println(modification);
         }
+
+        writer.flush();
+        writer.close();
     }
 
     public Notes getNotes() throws IllegalStateException {

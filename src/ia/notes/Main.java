@@ -1,6 +1,5 @@
 package ia.notes;
 
-import ia.notes.concurrency.GeneralRequest;
 import ia.notes.concurrency.IOManager;
 import ia.notes.files.FileManager;
 import javafx.application.Application;
@@ -13,6 +12,7 @@ public class Main extends Application {
 
     private FileManager fileManager;
     private IOManager ioManager;
+    private Controller controller;
 
     @Override
     public void start(Stage primaryStage) throws Exception{
@@ -20,7 +20,7 @@ public class Main extends Application {
         // Launch JavaFX
         FXMLLoader loader = new FXMLLoader(getClass().getResource("main.fxml"));
         Parent root = loader.load();
-        Controller controller = loader.getController();
+        this.controller = loader.getController();
         primaryStage.setTitle("Note Taker");
         primaryStage.setScene(new Scene(root, 800, 600));
         primaryStage.show();
@@ -31,12 +31,13 @@ public class Main extends Application {
         this.fileManager = new FileManager(this);
 
         // Asynchronously load notes from storage
-        ioManager.executeLater(new GeneralRequest() {
+        /* ioManager.executeLater(new GeneralRequest() {
             @Override
             public void run(Main main) {
                 fileManager.loadNotes();
             }
-        });
+        }); */
+        fileManager.loadNotes();
 
 
         // Initialize UI
@@ -69,6 +70,10 @@ public class Main extends Application {
 
     public FileManager getFileManager() {
         return fileManager;
+    }
+
+    public Controller getController() {
+        return controller;
     }
 
     public static void main(String[] args) {

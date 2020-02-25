@@ -53,9 +53,9 @@ public class FileManager {
         try {
             notesFile.load();
             notesFiles.add(notesFile);
+            main.getController().registerNotes(notesFile);
         } catch (IOException e){
-            String name = notesFile.getName();
-            System.out.printf("Error loading notes file '%s'%n", name);
+            System.out.printf("Error loading notes file '%s'%n", notesFile.getName());
         }
     }
 
