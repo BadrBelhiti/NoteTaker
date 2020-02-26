@@ -14,7 +14,7 @@ import java.util.Optional;
 public class Controller {
 
     @FXML
-    private ListView notesList;
+    private ListView<String> notesList;
 
     @FXML
     private Button addButton;
@@ -34,12 +34,14 @@ public class Controller {
     public void init(Main main){
         this.main = main;
         this.fileManager = main.getFileManager();
+        notesArea.setEditable(false);
     }
 
     public void initialize(){
 
         notesList.setItems(notes);
 
+        // Show Note Creation dialog when user clicks on 'Add' button and handle input
         addButton.setOnAction((e) -> {
             TextInputDialog dialog = new TextInputDialog("untitled notes");
             dialog.setTitle("Add Notes");
@@ -47,6 +49,7 @@ public class Controller {
             dialog.setContentText("Name of notes:");
 
             Optional<String> result = dialog.showAndWait();
+            result.ifPresent(name -> notes.add(name));
             if (result.isPresent()){
                 String notes = result.get();
                 NotesFile notesFile = new NotesFile(notes);
@@ -54,9 +57,11 @@ public class Controller {
             }
         });
 
+
+        // Show Deletion Confirmation dialog when user clicks 'Remove' button and handle input
         removeButton.setOnAction((e) -> {
 
-            String name = (String) notesList.getSelectionModel().getSelectedItem();
+            String name = notesList.getSelectionModel().getSelectedItem();
 
             if (name == null){
                 return;
@@ -80,25 +85,26 @@ public class Controller {
 
         });
 
+        // Update Note's modifications set upon editing
         notesArea.textProperty().addListener((e, o , n) -> {
             Modification modification = Utils.getChange(o, n, System.currentTimeMillis());
-            System.out.println(modification);
-            if (modification != null && currentNotes != null){
+            if (currentNotes != null){
                 currentNotes.getNotes().edit(modification);
             }
         });
 
-        notesList.getSelectionModel().selectedItemProperty().addListener((e) -> {
-            String selected = (String) notesList.getSelectionModel().getSelectedItem();
-            System.out.printf("Selected: %s%n", selected);
-            this.currentNotes = fileManager.getNotesFile(selected);
-            System.out.println(currentNotes == null);
+        // Select which Notes to show
+        notesList.getSelectionModel().selectedItemProperty().addListener((e, previous, selected) -> {
+            NotesFile notesFile = main.getFileManager().getNotesFile(selected);
+            if (notesFile != null){
+                this.currentNotes = notesFile;
+                notesArea.setEditable(true);
+            } else {
+                notesArea.setEditable(false);
+            }
+            notesArea.clear();
         });
 
-    }
-
-    public void registerNotes(NotesFile notesFile){
-        notes.add(notesFile.getName());
     }
 
 }

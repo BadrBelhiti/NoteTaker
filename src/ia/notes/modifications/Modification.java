@@ -39,19 +39,9 @@ public abstract class Modification implements Comparable<Modification> {
         }
 
         // Parse data using regex
-        /*
-        String pattern = "\\.*(insertion|deletion).*(pos:\\d+).*(time:\\d+).*";
-        Pattern compiled = Pattern.compile(pattern);
-        Matcher matcher = compiled.matcher(data);
 
-        System.out.println(matcher.group(1));
-        System.out.println(matcher.group(2));
-        System.out.println(matcher.group(3));
-        */
-
-
-        int pos = Integer.parseInt(Utils.findSingle("pos:\\d+", data).replace("pos:", ""));
-        long time = Long.parseLong(Utils.findSingle("time:\\d+", data).replace("time:", ""));
+        int pos = Integer.parseInt(Utils.findSingle("(pos:\\d+)", data).replace("pos:", ""));
+        long time = Long.parseLong(Utils.findSingle("(time:\\d+)", data).replace("time:", ""));
         String type = Utils.findSingle("(insertion|deletion)", data);
 
 

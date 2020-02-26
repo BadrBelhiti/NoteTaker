@@ -13,9 +13,10 @@ public class Utils {
     public static String findSingle(String regex, String s){
         Pattern pattern = Pattern.compile(regex);
         Matcher matcher = pattern.matcher(s);
-        MatchResult matchResult = matcher.toMatchResult();
-        System.out.println(matchResult);
-        return matchResult.group();
+        if (matcher.find()) {
+            return matcher.group();
+        }
+        return null;
     }
 
 
