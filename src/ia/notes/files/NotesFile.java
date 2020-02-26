@@ -17,15 +17,15 @@ public class NotesFile extends AbstractFile {
 
     @Override
     public synchronized void load() throws FileNotFoundException {
+        this.notes = new Notes(this, name, new TreeSet<>());
+
         Scanner input = new Scanner(file);
 
         if (!input.hasNext()){
-            this.notes = new Notes(this, name, new TreeSet<>());
             return;
         }
 
         String title = input.nextLine();
-        TreeSet<Modification> modifications = new TreeSet<>();
 
         int lineNumber = 2;
 
@@ -39,11 +39,9 @@ public class NotesFile extends AbstractFile {
                         String.format("Invalid modification data on line %d in file %s", lineNumber, file.getAbsolutePath()));
             }
 
-            modifications.add(modification);
+            notes.edit(modification);
             lineNumber++;
         }
-
-        this.notes = new Notes(this, title, modifications);
     }
 
     public synchronized void save() throws IOException {

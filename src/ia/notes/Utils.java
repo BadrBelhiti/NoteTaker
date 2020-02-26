@@ -4,7 +4,6 @@ import ia.notes.modifications.Deletion;
 import ia.notes.modifications.Insertion;
 import ia.notes.modifications.Modification;
 
-import java.util.regex.MatchResult;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 

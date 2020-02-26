@@ -17,7 +17,7 @@ public abstract class Modification implements Comparable<Modification> {
 
     @Override
     public int compareTo(Modification o) {
-        return o.time - time > 0 ? 1 : -1;
+        return o.time - time > 0 ? -1 : 1;
     }
 
     public int getPos(){
@@ -34,22 +34,19 @@ public abstract class Modification implements Comparable<Modification> {
         Modification modification;
 
         // Verifies format of data being retrieved from string
-        if (!data.matches("\\{type:(insertion|deletion), (char:\\s, )?pos:\\d+, time:\\d+}")){
+        if (!data.matches("\\{type:(insertion|deletion), (char:., )?pos:\\d+, time:\\d+}")){
             return null;
         }
 
         // Parse data using regex
-
         int pos = Integer.parseInt(Utils.findSingle("(pos:\\d+)", data).replace("pos:", ""));
         long time = Long.parseLong(Utils.findSingle("(time:\\d+)", data).replace("time:", ""));
         String type = Utils.findSingle("(insertion|deletion)", data);
 
 
-        System.out.println(type);
-
         if (type.equals("insertion")){
             // Parse character data for insertion modification
-            char character = Utils.findSingle("char:\\s", data).charAt(5);
+            char character = Utils.findSingle("(char:.)", data).charAt(5);
 
             modification = new Insertion(character, pos, time);
         } else {

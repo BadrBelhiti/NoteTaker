@@ -1,6 +1,8 @@
 package ia.notes;
 
 import ia.notes.files.NotesFile;
+import ia.notes.modifications.Deletion;
+import ia.notes.modifications.Insertion;
 import ia.notes.modifications.Modification;
 
 import javax.sound.sampled.Clip;
@@ -26,6 +28,7 @@ public class Notes implements Runnable {
         this.notesFile = notesFile;
         this.title = title;
         this.modifications = modifications;
+        this.mostRecent = "";
 
         this.WORKER_THREAD = new Thread(this);
     }
@@ -76,6 +79,27 @@ public class Notes implements Runnable {
 
     public void edit(Modification modification){
         modifications.add(modification);
+        char[] chars = mostRecent.toCharArray();
+        int pos = modification.getPos();
+
+        if (modification instanceof Insertion){
+            Insertion insertion = (Insertion) modification;
+            char[] newChars = new char[chars.length + 1];
+
+            System.arraycopy(chars, 0, newChars, 0, pos);
+            newChars[pos] = insertion.getCharacter();
+            System.arraycopy(chars, pos, newChars, pos + 1, newChars.length - pos - 1);
+
+            chars = newChars;
+        } else if (modification instanceof Deletion){
+            char[] newChars = new char[chars.length - 1];
+            System.out.println(pos);
+            System.arraycopy(chars, 0, newChars, 0, pos);
+            System.arraycopy(chars, pos, newChars, pos - 1, newChars.length - pos);
+            chars = newChars;
+        }
+        this.mostRecent = new String(chars);
+        System.out.println(mostRecent);
     }
 
     public void toggleMic(){
@@ -92,5 +116,9 @@ public class Notes implements Runnable {
 
     public TreeSet<Modification> getModifications() {
         return modifications;
+    }
+
+    public String getMostRecent() {
+        return mostRecent;
     }
 }

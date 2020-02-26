@@ -49,7 +49,6 @@ public class Controller {
             dialog.setContentText("Name of notes:");
 
             Optional<String> result = dialog.showAndWait();
-            result.ifPresent(name -> notes.add(name));
             if (result.isPresent()){
                 String notes = result.get();
                 NotesFile notesFile = new NotesFile(notes);
@@ -87,8 +86,9 @@ public class Controller {
 
         // Update Note's modifications set upon editing
         notesArea.textProperty().addListener((e, o , n) -> {
-            Modification modification = Utils.getChange(o, n, System.currentTimeMillis());
-            if (currentNotes != null){
+            if (currentNotes != null && !flag && o.length() != n.length()){
+                Modification modification = Utils.getChange(o, n, System.currentTimeMillis());
+                System.out.println("!");
                 currentNotes.getNotes().edit(modification);
             }
         });
@@ -99,12 +99,25 @@ public class Controller {
             if (notesFile != null){
                 this.currentNotes = notesFile;
                 notesArea.setEditable(true);
+                displayNotes(notesFile.getNotes());
             } else {
                 notesArea.setEditable(false);
             }
             notesArea.clear();
         });
 
+    }
+
+    public void registerNotes(NotesFile notesFile){
+        notes.add(notesFile.getName());
+    }
+
+    private boolean flag = false;
+
+    public void displayNotes(Notes notes){
+        this.flag = true;
+        notesArea.setText(notes.getMostRecent());
+        this.flag = false;
     }
 
 }
