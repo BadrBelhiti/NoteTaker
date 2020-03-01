@@ -79,7 +79,11 @@ public class Notes implements Runnable {
 
     public void edit(Modification modification){
         modifications.add(modification);
-        char[] chars = mostRecent.toCharArray();
+        this.mostRecent = applyModification(mostRecent, modification);
+    }
+
+    private String applyModification(String text, Modification modification){
+        char[] chars = text.toCharArray();
         int pos = modification.getPos();
 
         if (modification instanceof Insertion){
@@ -93,13 +97,13 @@ public class Notes implements Runnable {
             chars = newChars;
         } else if (modification instanceof Deletion){
             char[] newChars = new char[chars.length - 1];
-            System.out.println(pos);
+
             System.arraycopy(chars, 0, newChars, 0, pos);
-            System.arraycopy(chars, pos, newChars, pos - 1, newChars.length - pos);
+            System.arraycopy(chars, pos, newChars, Math.max(pos - 1, 0), newChars.length - pos);
+
             chars = newChars;
         }
-        this.mostRecent = new String(chars);
-        System.out.println(mostRecent);
+        return new String(chars);
     }
 
     public void toggleMic(){

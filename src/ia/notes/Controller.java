@@ -88,7 +88,6 @@ public class Controller {
         notesArea.textProperty().addListener((e, o , n) -> {
             if (currentNotes != null && !flag && o.length() != n.length()){
                 Modification modification = Utils.getChange(o, n, System.currentTimeMillis());
-                System.out.println("!");
                 currentNotes.getNotes().edit(modification);
             }
         });
@@ -103,7 +102,6 @@ public class Controller {
             } else {
                 notesArea.setEditable(false);
             }
-            notesArea.clear();
         });
 
     }
