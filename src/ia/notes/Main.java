@@ -3,6 +3,7 @@ package ia.notes;
 import ia.notes.concurrency.GeneralRequest;
 import ia.notes.concurrency.IOManager;
 import ia.notes.files.FileManager;
+import ia.notes.files.NotesFile;
 import javafx.application.Application;
 import javafx.fxml.FXMLLoader;
 import javafx.scene.Parent;
@@ -48,7 +49,9 @@ public class Main extends Application {
     public void stop(){
         System.out.println("Closing...");
 
-
+        for (NotesFile notesFile : fileManager.getNotesFiles()){
+            notesFile.getNotes().stop();
+        }
 
         // Asynchronously save all notes
         ioManager.executeLater(new GeneralRequest() {

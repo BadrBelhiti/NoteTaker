@@ -94,6 +94,9 @@ public class FileManager {
         return null;
     }
 
+    public HashSet<NotesFile> getNotesFiles() {
+        return notesFiles;
+    }
 
     public static File getMasterDirectory(){
         return MASTER_DIRECTORY;
