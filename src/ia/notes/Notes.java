@@ -1,12 +1,16 @@
 package ia.notes;
 
+import ia.notes.concurrency.IOManager;
 import ia.notes.files.NotesFile;
 import ia.notes.modifications.Deletion;
 import ia.notes.modifications.Insertion;
 import ia.notes.modifications.Modification;
+import javafx.application.Platform;
 
 import javax.sound.sampled.Clip;
 import java.io.IOException;
+import java.util.ArrayList;
+import java.util.Stack;
 import java.util.TreeSet;
 
 public class Notes implements Runnable {
@@ -24,6 +28,12 @@ public class Notes implements Runnable {
     private Clip audio;
     private NotesFile notesFile;
 
+    private ArrayList<Modification> currentPlayback;
+    private String playbackState;
+    private Controller controller;
+    private int cursor;
+    private boolean playbackPlaying = false;
+
     public Notes(NotesFile notesFile, String title, TreeSet<Modification> modifications){
         this.notesFile = notesFile;
         this.title = title;
@@ -33,33 +43,55 @@ public class Notes implements Runnable {
         this.WORKER_THREAD = new Thread(this);
     }
 
-    public void start(){
+    public void start(IOManager ioManager){
         this.running = true;
         WORKER_THREAD.start();
+        ioManager.registerThread(WORKER_THREAD);
     }
 
     @Override
     public void run() {
         while (running){
 
-            if (System.currentTimeMillis() - lastSave > AUTOSAVE_INTERVAL_MS){
+            if (playbackPlaying){
+                if (hasNext()){
+                    next();
 
-                try {
-                    notesFile.save();
+                    if (cursor < currentPlayback.size()){
+                        Modification curr = currentPlayback.get(cursor - 1);
+                        Modification next = currentPlayback.get(cursor);
 
-                    // Reset last save if successful
-                    this.lastSave = System.currentTimeMillis();
+                        try {
+                            Thread.sleep(next.getTime() - curr.getTime());
+                        } catch (InterruptedException e){
+                            System.out.println("Playback out of sync");
+                        }
 
-                } catch (IOException e){
-                    // TODO: Handle exception
+                    }
+
                 }
 
-            } else {
 
-                try {
-                    Thread.sleep(1000);
-                } catch (InterruptedException e){
-                    // TODO: Handle exception
+            } else {
+                if (System.currentTimeMillis() - lastSave > AUTOSAVE_INTERVAL_MS) {
+
+                    try {
+                        notesFile.save();
+
+                        // Reset last save if successful
+                        this.lastSave = System.currentTimeMillis();
+
+                    } catch (IOException e) {
+                        System.out.println("Failed autosave");
+                    }
+
+                } else {
+
+                    try {
+                        Thread.sleep(1000);
+                    } catch (InterruptedException e) {
+                        System.out.println("Thread sleep failed");
+                    }
                 }
             }
 
@@ -75,6 +107,39 @@ public class Notes implements Runnable {
             success = false;
         }
         return success;
+    }
+
+    public void startPlayback(Controller controller){
+        this.controller = controller;
+        this.playbackPlaying = true;
+        this.currentPlayback = new ArrayList<>();
+        this.playbackState = "";
+        this.cursor = 0;
+        currentPlayback.addAll(modifications);
+    }
+
+    public void stopPlayback(){
+        this.playbackPlaying = false;
+    }
+
+
+    public void next(){
+        if (!playbackPlaying){
+            throw new IllegalStateException("Playback not initialized");
+        }
+
+        if (cursor >= currentPlayback.size()){
+            throw new IllegalStateException("Playback exceeded modification set");
+        }
+
+        this.playbackState = applyModification(playbackState, getNext());
+        cursor++;
+
+        Platform.runLater(() -> controller.showPlaybackState(this));
+    }
+
+    private Modification getNext(){
+        return currentPlayback.get(cursor);
     }
 
     public void edit(Modification modification){
@@ -106,6 +171,10 @@ public class Notes implements Runnable {
         return new String(chars);
     }
 
+    public boolean hasNext(){
+        return cursor != modifications.size();
+    }
+
     public void toggleMic(){
         this.listening = !listening;
     }
@@ -124,5 +193,13 @@ public class Notes implements Runnable {
 
     public String getMostRecent() {
         return mostRecent;
+    }
+
+    public String getPlaybackState() {
+        return playbackState;
+    }
+
+    public boolean isPlaybackPlaying() {
+        return playbackPlaying;
     }
 }

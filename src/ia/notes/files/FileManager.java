@@ -60,10 +60,12 @@ public class FileManager {
     }
 
     public void deleteNotes(String notes){
+        NotesFile notesFile = getNotesFile(notes);
         File file = new File(NOTES_DIRECTORY, notes);
         if (!file.delete()){
             System.out.printf("Error deleting file '%s'%n", notes);
         }
+        notesFiles.remove(notesFile);
     }
 
     public void saveNotes(){

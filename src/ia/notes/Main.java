@@ -1,5 +1,6 @@
 package ia.notes;
 
+import ia.notes.concurrency.GeneralRequest;
 import ia.notes.concurrency.IOManager;
 import ia.notes.files.FileManager;
 import javafx.application.Application;
@@ -31,13 +32,12 @@ public class Main extends Application {
         this.fileManager = new FileManager(this);
 
         // Asynchronously load notes from storage
-        /* ioManager.executeLater(new GeneralRequest() {
+        ioManager.executeLater(new GeneralRequest() {
             @Override
             public void run(Main main) {
                 fileManager.loadNotes();
             }
-        }); */
-        fileManager.loadNotes();
+        });
 
 
         // Initialize UI
@@ -48,17 +48,15 @@ public class Main extends Application {
     public void stop(){
         System.out.println("Closing...");
 
-        // Save all notes
-        fileManager.saveNotes();
 
-        /*
+
+        // Asynchronously save all notes
         ioManager.executeLater(new GeneralRequest() {
             @Override
             public void run(Main main) {
                 fileManager.saveNotes();
             }
         });
-        */
 
         // Safely stop concurrency operations
         try {
@@ -74,6 +72,10 @@ public class Main extends Application {
 
     public Controller getController() {
         return controller;
+    }
+
+    public IOManager getIoManager() {
+        return ioManager;
     }
 
     public static void main(String[] args) {

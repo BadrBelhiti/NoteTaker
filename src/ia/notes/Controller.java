@@ -23,6 +23,9 @@ public class Controller {
     private Button removeButton;
 
     @FXML
+    private Button testButton;
+
+    @FXML
     private TextArea notesArea;
 
     private ObservableList<String> notes = FXCollections.observableArrayList();
@@ -82,6 +85,17 @@ public class Controller {
                 fileManager.deleteNotes(name);
             }
 
+            notesArea.clear();
+        });
+
+        testButton.setOnAction((e) -> {
+            if (currentNotes != null){
+                Notes notes = currentNotes.getNotes();
+                if (!notes.isPlaybackPlaying()){
+                    notes.startPlayback(this);
+                    System.out.println("Started");
+                }
+            }
         });
 
         // Update Note's modifications set upon editing
@@ -96,7 +110,12 @@ public class Controller {
         notesList.getSelectionModel().selectedItemProperty().addListener((e, previous, selected) -> {
             NotesFile notesFile = main.getFileManager().getNotesFile(selected);
             if (notesFile != null){
+                if (currentNotes != null){
+                    currentNotes.getNotes().stop();
+                }
+
                 this.currentNotes = notesFile;
+                notesFile.getNotes().start(main.getIoManager());
                 notesArea.setEditable(true);
                 displayNotes(notesFile.getNotes());
             } else {
@@ -116,6 +135,14 @@ public class Controller {
         this.flag = true;
         notesArea.setText(notes.getMostRecent());
         this.flag = false;
+    }
+
+    public void showPlaybackState(Notes notes){
+        if (notes.isPlaybackPlaying()){
+            this.flag = true;
+            notesArea.setText(notes.getPlaybackState());
+            this.flag = false;
+        }
     }
 
 }

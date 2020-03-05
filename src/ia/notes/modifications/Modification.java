@@ -24,6 +24,10 @@ public abstract class Modification implements Comparable<Modification> {
         return pos;
     }
 
+    public long getTime() {
+        return time;
+    }
+
     public abstract String toString();
 
     // {type:deletion, pos:0, time:1582582140032}
