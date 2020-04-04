@@ -7,7 +7,7 @@ import ia.notes.modifications.Insertion;
 import ia.notes.modifications.Modification;
 import javafx.application.Platform;
 
-import javax.sound.sampled.Clip;
+import javax.sound.sampled.*;
 import java.io.IOException;
 import java.util.ArrayList;
 import java.util.Stack;
@@ -25,7 +25,7 @@ public class Notes implements Runnable {
     private String title;
     private TreeSet<Modification> modifications;
     private String mostRecent;
-    private Clip audio;
+    private TargetDataLine audio;
     private NotesFile notesFile;
 
     private ArrayList<Modification> currentPlayback;
@@ -41,6 +41,27 @@ public class Notes implements Runnable {
         this.mostRecent = "";
 
         this.WORKER_THREAD = new Thread(this);
+        initiateAudio();
+    }
+
+    private void initiateAudio(){
+        // TODO
+        AudioFormat format = null;
+
+        DataLine.Info info = new DataLine.Info(TargetDataLine.class, format);
+
+        if (!AudioSystem.isLineSupported(info)){
+            System.out.println("Audio line not supported");
+            return;
+        }
+
+        try {
+            this.audio = (TargetDataLine) AudioSystem.getLine(info);
+            audio.open(format);
+        } catch (LineUnavailableException e){
+            e.printStackTrace();
+        }
+
     }
 
     public void start(IOManager ioManager){
@@ -85,13 +106,15 @@ public class Notes implements Runnable {
                         System.out.println("Failed autosave");
                     }
 
-                } else {
+                } else if (!listening){
 
                     try {
                         Thread.sleep(1000);
                     } catch (InterruptedException e) {
                         System.out.println("Thread sleep failed");
                     }
+                } else {
+
                 }
             }
 
