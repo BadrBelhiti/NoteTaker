@@ -12,7 +12,7 @@ public class NotesFile extends AbstractFile {
     private Notes notes;
 
     public NotesFile(String name) {
-        super(name, new File(FileManager.getMasterDirectory(), "notes"));
+        super(name, new File(FileManager.getNotesDirectory(), name));
     }
 
     @Override

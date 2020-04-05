@@ -101,4 +101,8 @@ public class FileManager {
     public static File getMasterDirectory(){
         return MASTER_DIRECTORY;
     }
+
+    public static File getNotesDirectory() {
+        return NOTES_DIRECTORY;
+    }
 }
