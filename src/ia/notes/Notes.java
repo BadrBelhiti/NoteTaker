@@ -129,6 +129,9 @@ public class Notes implements Runnable {
         } catch (InterruptedException e){
             success = false;
         }
+
+
+
         return success;
     }
 

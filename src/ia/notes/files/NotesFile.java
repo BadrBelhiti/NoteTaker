@@ -4,15 +4,22 @@ import ia.notes.Notes;
 import ia.notes.modifications.Modification;
 
 import java.io.*;
-import java.util.Scanner;
-import java.util.TreeSet;
+import java.util.*;
 
 public class NotesFile extends AbstractFile {
 
     private Notes notes;
+    private List<File> audio;
 
     public NotesFile(String name) {
         super(name, new File(FileManager.getNotesDirectory(), name));
+        this.audio = new ArrayList<>();
+
+        for (File file : Objects.requireNonNull(this.file.listFiles())){
+            if (file.isFile() && file.getName().endsWith(".wav")){
+                audio.add(file);
+            }
+        }
     }
 
     @Override
